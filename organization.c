@@ -32,29 +32,56 @@ tError organization_init(tOrganization* object, const char* name, tGuestTable* g
 void organization_free(tOrganization* object) {
     
     // PR1 EX2
-	assert(object != NULL);
-	
-	/*if(object->name != NULL) {
+	if(object->name != NULL) {
         free(object->name);
         object->name = NULL;
-    }
-    if(object->guests != NULL) {
-        object->name = NULL;
-    }
-    return ;*/
+	}
+	object->guests=NULL;
+    return ;
 }
 
 // Compare two organizations
 bool organization_equals(tOrganization* organization1, tOrganization* organization2) {
     
     // PR1 EX2
-    return false;
+	// Verify pre conditions
+    assert(organization1 != NULL);
+    assert(organization2 != NULL);
+
+    if(strcmp(organization1->name, organization2->name) != 0) {
+        // Names are different
+        return false;
+	}
+	if (!guestTable_equals(organization1->guests, organization2->guests)){
+		//Guest tables are different
+		return false;
+	}
+    
+    return true;
+	
 }
 
 // Copy the data of a organization to another organization
 tError organization_cpy(tOrganization* dst, tOrganization* src) {
     // PR1 EX2
-    return ERR_NOT_IMPLEMENTED;
+	// Verify pre conditions
+    assert(dst != NULL);
+    assert(src != NULL);
+    
+    // Free the space used by destination object. An initialized object is assumed.
+    dst->name=NULL;
+    
+    // Initialize the element with the new data
+    organization_init(dst, src->name, src->guests);
+	
+	 if(dst->name == NULL || dst->guests == NULL) {
+        // Some of the fields have a NULL value, what means that we found some problem allocating the memory
+        return ERR_MEMORY_ERROR;
+	}
+
+    else {
+		return OK;
+	}
 }
 
 // Get the guestTable of a organization
@@ -70,6 +97,13 @@ tGuestTable* organization_getGuests(tOrganization* organization) {
 // Initialize the Table of organizations
 void organizationTable_init(tOrganizationTable* table) {
     // PR1 EX3
+	// Verify pre conditions
+    assert(table != NULL);    
+    
+    // The initialization of a table is to set it to the empty state. That is, with 0 elements. 
+    table->size = 0;
+    // Using dynamic memory, the pointer to the elements must be set to NULL (no memory allocated). This is the main difference with respect to the user of static memory, were data was allways initialized (tGuest elements[MAX_ELEMENTS])
+    table->elements = NULL;
     return ;
 }
 
